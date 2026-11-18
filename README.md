@@ -57,7 +57,7 @@ feeds.json ──► scrape.py (Arctic Shift API) ──► public/*.xml ──�
    {
      "slug": "my-new-feed",
      "title": "Display Title in RSS Reader",
-     "url": "[https://old.reddit.com/r/SubredditName/new/](https://old.reddit.com/r/SubredditName/new/)"
+     "url": "https://old.reddit.com/r/SubredditName/new/"
    }
    ```
    * **Subreddit feed:** Any URL containing `/r/<subreddit>`.
