@@ -45,6 +45,7 @@ feeds.json ──► scrape.py (Arctic Shift API) ──► public/*.xml ──�
 | `feeds.json` | Configuration list defining each feed's output filename (`slug`), display `title`, and Reddit `url`. |
 | `scrape.py` | Queries Arctic Shift, renders Markdown to HTML, and generates `public/<slug>.xml` and `public/index.html`. |
 | `.github/workflows/feed.yml` | GitHub Actions workflow that validates Python syntax, runs `scrape.py`, and deploys `public/` to GitHub Pages. |
+| `.github/workflows/keepalive.yml` | Monthly empty-commit workflow that prevents GitHub from disabling scheduled crons after 60 days of repository inactivity. |
 
 ---
 
@@ -72,11 +73,11 @@ pip install curl_cffi markdown
 python scrape.py
 ```
 
-Generated XML files and `index.html` are written to the local `public/` directory.
+Generated XML files and `index.html` are written to the local `public/` directory (ignored by Git via `.gitignore`).
 
 ---
 
 ## Operational Notes
 
-* **60-Day Inactivity Rule:** GitHub automatically disables scheduled (`cron`) workflows in public repositories after 60 days without a commit. Re-enable the workflow in the **Actions** tab or push a commit periodically to keep it active.
+* **60-Day Inactivity Rule:** Handled automatically by `.github/workflows/keepalive.yml`, which pushes an empty commit on the 1st of every month. Because `feed.yml` filters pushes by `paths`, the keepalive commit does not trigger an extra scrape.
 * **Latency:** Arctic Shift ingestion lags live Reddit by a few minutes, and GitHub Actions cron schedules can drift by 5–20 minutes under load.
