@@ -84,12 +84,15 @@ def parse_posts(items: list[dict]) -> list[dict]:
         created_utc = post.get("created_utc")
         dt = datetime.fromtimestamp(created_utc, tz=timezone.utc) if created_utc else datetime.now(timezone.utc)
 
+        selftext = (post.get("selftext") or "").strip()
+        body_html = render_markdown(selftext) if selftext and selftext not in ("[deleted]", "[removed]") else ""
+
         entries.append({
             "title": title,
             "link": deal_url,
             "guid": comments_url,
             "dt": dt,
-            "html": f'<p><a href="{escape(deal_url)}">Direct Deal Link</a> | <a href="{escape(comments_url)}">Reddit Comments</a></p>',
+            "html": f'<p><a href="{escape(deal_url)}">Direct Deal Link</a> | <a href="{escape(comments_url)}">Reddit Comments</a></p>{body_html}',
         })
     return entries
 
