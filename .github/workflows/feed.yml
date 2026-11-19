@@ -2,7 +2,7 @@ name: Update Reddit RSS Feed
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/47 * * * *"
   push:
     branches:
       - main
