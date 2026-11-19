@@ -31,7 +31,7 @@ feeds.json ──► scrape.py (Arctic Shift API) ──► public/*.xml ──�
    * Retries failed requests up to 3 times with incremental backoff (40s timeout per attempt, 3s delay between feeds).
 3. **Parsing & XML Generation:**
    * Strips stickied posts/comments and `[deleted]` / `[removed]` entries.
-   * Converts Reddit Markdown and bare URLs in comments into real HTML (`<a>` tags, tables, line breaks) so links are clickable in RSS readers and detectable by browser userscripts.
+   * Converts Reddit Markdown and bare URLs in text posts and comments into real HTML (`<a>` tags, tables, line breaks) so links are clickable in RSS readers and detectable by browser userscripts.
    * Uses the permanent Reddit permalink as `<guid>` so RSS readers deduplicate items across polls.
    * **All-or-Nothing Guard:** If any feed fails to fetch (`len(index_links) < len(FEEDS)`), the script raises an error and aborts the workflow so GitHub Pages does not overwrite existing live `.xml` files with a partial build.
 4. **Deployment:** The workflow splits `build` and `deploy` into separate jobs so feature branches can run CI checks without tripping `github-pages` branch protection rules. Only runs on `main` deploy `public/`.
@@ -57,7 +57,7 @@ feeds.json ──► scrape.py (Arctic Shift API) ──► public/*.xml ──�
    {
      "slug": "my-new-feed",
      "title": "Display Title in RSS Reader",
-     "url": "https://old.reddit.com/r/SubredditName/new/"
+     "url": "[https://old.reddit.com/r/SubredditName/new/](https://old.reddit.com/r/SubredditName/new/)"
    }
    ```
    * **Subreddit feed:** Any URL containing `/r/<subreddit>`.
