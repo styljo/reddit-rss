@@ -77,6 +77,7 @@ def parse_posts(items: list[dict]) -> list[dict]:
         if not title or not permalink:
             continue
 
+        author = post.get("author") or "[deleted]"
         comments_url = f"https://www.reddit.com{permalink}"
         if deal_url.startswith("/"):
             deal_url = f"https://www.reddit.com{deal_url}"
@@ -87,12 +88,19 @@ def parse_posts(items: list[dict]) -> list[dict]:
         selftext = (post.get("selftext") or "").strip()
         body_html = render_markdown(selftext) if selftext and selftext not in ("[deleted]", "[removed]") else ""
 
+        links = []
+        if deal_url and deal_url.rstrip("/") != comments_url.rstrip("/"):
+            links.append(f'<a href="{escape(deal_url)}">[link]</a>')
+        links.append(f'<a href="{escape(comments_url)}">[comments]</a>')
+
+        meta_html = f'<p>submitted by /u/{escape(author)}<br/>{" ".join(links)}</p>'
+
         entries.append({
             "title": title,
-            "link": deal_url,
+            "link": comments_url,
             "guid": comments_url,
             "dt": dt,
-            "html": f'<p><a href="{escape(deal_url)}">Direct Deal Link</a> | <a href="{escape(comments_url)}">Reddit Comments</a></p>{body_html}',
+            "html": f"{meta_html}{body_html}",
         })
     return entries
 
