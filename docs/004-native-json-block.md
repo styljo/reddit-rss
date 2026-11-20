@@ -5,7 +5,7 @@
 Attempted to eliminate Arctic Shift's ingestion lag and megathread timeouts by pulling data directly from Reddit's native JSON feeds (e.g., `.../comments/p0ik3q.json`).
 
 ## Method
-Created a standalone `test.py` script utilizing the `curl_cffi` library to perfectly spoof a Google Chrome 120 TLS fingerprint, attempting to bypass Reddit's bot-detection.
+Created a standalone `test_reddit_native.py` script utilizing the `curl_cffi` library to perfectly spoof a Google Chrome 120 TLS fingerprint, attempting to bypass Reddit's bot-detection.
 
 ## Result
 * **Status:** `403 Forbidden` (Failed).
