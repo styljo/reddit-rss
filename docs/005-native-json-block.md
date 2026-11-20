@@ -12,3 +12,4 @@ Created a standalone `test_reddit_native.py` script utilizing the `curl_cffi` li
 - **Root Cause:** While browser fingerprinting succeeded locally, GitHub Actions executes on Microsoft Azure cloud servers. Reddit's Web Application Firewall (WAF) aggressively blacklists known data center IP blocks. 
 - **Conclusion:** Native JSON scraping is impossible on cloud CI/CD runners without official developer authentication. 
 - **Next Steps:** The `test_reddit_native.py` script remains in the repository as a diagnostic probe. Direct JSON scraping remains a viable fallback only if execution is moved to a residential IP (e.g., a local Windows scheduled task pushing to GitHub).
+- **Rollback / Active State:** No changes were applied to `scrape.py`; Arctic Shift remained the active data source for GitHub Actions.
