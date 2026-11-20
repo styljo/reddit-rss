@@ -36,7 +36,8 @@ jobs:
         run: python -m py_compile scrape.py
 
       - name: Scrape subreddits and generate XML
-        run: python scrape.py
+        run: python test_pullpush.py
+        #run: python scrape.py
         #run: python test.py
 
       - name: Setup Pages
