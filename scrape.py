@@ -39,14 +39,14 @@ def fetch_arctic_shift(url: str) -> tuple[str, list[dict]]:
             resp = requests.get(endpoint, params=params, timeout=40)
             if resp.status_code >= 400:
                 raise RuntimeError(f"HTTP {resp.status_code}: {resp.text[:200]}")
-            data = resp.json().get("data", [])
+            data = resp.json().get("data") or []
             # If a quiet megathread had no comments in the last 30 days, retry once without 'after'
             if kind == "comments" and not data and "after" in params:
-                params.pop("after")
-                resp = requests.get(endpoint, params=params, timeout=40)
+                fallback_params = {k: v for k, v in params.items() if k != "after"}
+                resp = requests.get(endpoint, params=fallback_params, timeout=40)
                 if resp.status_code >= 400:
                     raise RuntimeError(f"HTTP {resp.status_code}: {resp.text[:200]}")
-                data = resp.json().get("data", [])
+                data = resp.json().get("data") or []
             return kind, data
         except Exception as exc:
             last_exc = exc
@@ -88,10 +88,11 @@ def parse_posts(items: list[dict]) -> list[dict]:
         selftext = (post.get("selftext") or "").strip()
         body_html = render_markdown(selftext) if selftext and selftext not in ("[deleted]", "[removed]") else ""
 
+        attr_entities = {'"': "&quot;"}
         links = []
         if deal_url and deal_url.rstrip("/") != comments_url.rstrip("/"):
-            links.append(f'<a href="{escape(deal_url)}">[link]</a>')
-        links.append(f'<a href="{escape(comments_url)}">[comments]</a>')
+            links.append(f'<a href="{escape(deal_url, attr_entities)}">[link]</a>')
+        links.append(f'<a href="{escape(comments_url, attr_entities)}">[comments]</a>')
 
         meta_html = f'<p>submitted by /u/{escape(author)}<br/>{" ".join(links)}</p>'
 

@@ -37,8 +37,8 @@ jobs:
 
       - name: Scrape subreddits and generate XML
         run: python scrape.py
-        #run: python test_pullpush_api.py
-        #run: python test_reddit_native.py
+        #run: python debug/test_pullpush_api.py
+        #run: python debug/test_reddit_native.py
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

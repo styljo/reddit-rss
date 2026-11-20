@@ -6,6 +6,10 @@
 
 Establish an isolated local Python workspace at `C:\Github\reddit-rss` to inspect the codebase, verify syntax and dependencies, and test changes safely before pushing to `origin/main`.
 
+## Prerequisites
+
+- **Python 3.12** recommended (matches `.github/workflows/feed.yml`). **Python 3.9+** is required for built-in generic type annotations used in `scrape.py`.
+
 ## Setup Steps (Windows PowerShell)
 
 ### 1. Clone the Repository
@@ -42,7 +46,16 @@ python -m py_compile scrape.py
 python -c "import curl_cffi, markdown; print('Imports OK')"
 ```
 
+### 5. Run the Scraper Locally
+
+```powershell
+python scrape.py
+```
+
+Generated RSS feeds (`public/<slug>.xml`) and the directory page (`public/index.html`) are written to `public/`.
+
 ## Notes
 
 - Select `.venv\Scripts\python.exe` as the workspace interpreter in Antigravity IDE so terminal sessions and linters use the isolated environment.
-- Verify `.venv/` is listed in `.gitignore` (`git status`) before committing so local packages are never staged or pushed.
+- Both `.venv` and `public/` are listed in `.gitignore`; check `git status` before committing so local packages and generated feeds are never staged or pushed.
+- Optional API diagnostic scripts live in `debug/` (`python debug/test_reddit_native.py` and `python debug/test_pullpush_api.py`) and are not part of the automated scraping pipeline.

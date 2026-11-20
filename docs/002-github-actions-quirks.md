@@ -1,10 +1,18 @@
 # GitHub Actions Pipeline Protections
+
 **Date:** November 2026
 
 ## 1. The 60-Day Inactivity Rule
+
 - **The Problem:** GitHub automatically disables scheduled Actions (crons) on repositories that have not had push activity in 60 days. Because an RSS scraper is meant to be set-and-forget, it is highly susceptible to being silently disabled.
-- **The Solution:** Implemented `.github/workflows/keepalive.yml`. This workflow runs on the 1st of every month, configures a bot user, and pushes an empty commit (`chore: keepalive`) to the repository. This permanently resets the 60-day inactivity timer. 
+- **The Solution:** Implemented `.github/workflows/keepalive.yml`. This workflow runs on the 1st of every month, configures a bot user, and pushes an empty commit (`chore: keepalive`) to the repository, permanently resetting the 60-day inactivity timer. Because `.github/workflows/feed.yml` restricts push triggers with a `paths` filter (`feeds.json`, `scrape.py`, `.github/workflows/feed.yml`), the keepalive commit does not trigger an extra scrape.
 
 ## 2. All-or-Nothing Deployment Guard
+
 - **The Problem:** The `feeds.json` array is processed sequentially. If the API is online for the first feed but crashes on the second, generating the GitHub Pages artifact in its current state would overwrite the live site, essentially deleting the second feed's XML file.
 - **The Solution:** Added a strict length validation check (`if len(index_links) < len(FEEDS)`). If any feed fails to parse, the script intentionally raises a `RuntimeError` and crashes the job before the deployment step. This ensures GitHub Pages only hosts complete, fully successful builds.
+
+## 3. Split `build` / `deploy` Jobs & Syntax Gate
+
+- **The Problem:** Running deployment in the same job as scraping causes feature-branch CI runs (triggered manually via `workflow_dispatch`, since `push` only watches `main`) to fail against `github-pages` environment branch protection rules.
+- **The Solution:** `.github/workflows/feed.yml` runs `python -m py_compile scrape.py` as a fast syntax check inside the `build` job, and splits deployment into a separate `deploy` job gated by `if: github.ref == 'refs/heads/main'`.
