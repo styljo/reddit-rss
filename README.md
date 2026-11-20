@@ -81,3 +81,16 @@ Generated XML files and `index.html` are written to the local `public/` director
 
 * **60-Day Inactivity Rule:** Handled automatically by `.github/workflows/keepalive.yml`, which pushes an empty commit on the 1st of every month. Because `feed.yml` filters pushes by `paths`, the keepalive commit does not trigger an extra scrape.
 * **Latency:** Arctic Shift ingestion lags live Reddit by a few minutes, and GitHub Actions cron schedules can drift by 5–20 minutes under load.
+
+---
+
+## Architecture & Development Notes
+
+Technical decisions, API limitations, and historical troubleshooting are documented in the [`docs/`](./docs) folder to maintain a strict, chronological architectural record. **These files are append-only.** To preserve history, do not edit existing files except the last one. Log any new changes by creating the next sequential file or updating the last one (e.g., `007-new-fix.md`).
+
+* [`001-feed-formatting.md`](./docs/001-feed-formatting.md) - HTML layout and conditional rendering
+* [`002-github-actions-quirks.md`](./docs/002-github-actions-quirks.md) - Keepalive workflow and All-or-Nothing deployment guard
+* [`003-cron-limitations.md`](./docs/003-cron-limitations.md) - GitHub Actions limits and planned pipeline scheduling
+* [`004-arctic-shift-api.md`](./docs/004-arctic-shift-api.md) - Pushshift routing, 30-day fallback, and rate limiting
+* [`005-native-json-block.md`](./docs/005-native-json-block.md) - Reddit WAF blocks on Azure IPs
+* [`006-pullpush-cloudflare-block.md`](./docs/006-pullpush-cloudflare-block.md) - PullPush Cloudflare CAPTCHA blocks
