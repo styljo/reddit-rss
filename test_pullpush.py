@@ -1,4 +1,4 @@
-import requests
+from curl_cffi import requests
 
 # PullPush uses slightly different endpoints and parameters (size instead of limit)
 url = "https://api.pullpush.io/reddit/search/comment/"
