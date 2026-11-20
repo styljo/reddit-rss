@@ -5,7 +5,7 @@
 Attempted to swap Arctic Shift for PullPush (`api.pullpush.io`) to resolve API timeouts when querying the massive 3-year-old Itch.io megathread.
 
 ## Method
-- Created `test_pullpush.py` and switched from standard `requests` to `from curl_cffi import requests` because `.github/workflows/feed.yml` installs `curl_cffi` and `markdown` rather than `requests`.
+- Created `test_pullpush_api.py` and switched from standard `requests` to `from curl_cffi import requests` because `.github/workflows/feed.yml` installs `curl_cffi` and `markdown` rather than `requests`.
 
 ## Result
 - **Status:** `403 Forbidden` (Failed).
