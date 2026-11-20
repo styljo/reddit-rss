@@ -6,9 +6,9 @@ Automated RSS 2.0 feed generator for Reddit subreddits and megathread comments, 
 
 Subscribe to these URLs in your RSS reader (e.g., CommaFeed, FreshRSS, Miniflux):
 
-* **r/FreeGameFindings (New):** `https://styljo.github.io/reddit-rss/freegamefindings-new.xml`
-* **Itch.io Mega Thread (#10):** `https://styljo.github.io/reddit-rss/itchio-megathread.xml`
-* **Exiled Giveaways Mega Thread (#2):** `https://styljo.github.io/reddit-rss/exiled-giveaways-megathread.xml`
+- **r/FreeGameFindings (New):** `https://styljo.github.io/reddit-rss/freegamefindings-new.xml`
+- **Itch.io Mega Thread (#10):** `https://styljo.github.io/reddit-rss/itchio-megathread.xml`
+- **Exiled Giveaways Mega Thread (#2):** `https://styljo.github.io/reddit-rss/exiled-giveaways-megathread.xml`
 
 A directory of active feeds is hosted at `https://styljo.github.io/reddit-rss/`.
 
@@ -24,16 +24,16 @@ feeds.json ──► scrape.py (Arctic Shift API) ──► public/*.xml ──�
 
 1. **Scheduled Execution:** `.github/workflows/feed.yml` runs every 30 minutes via cron, on pushes to `main`, or via manual `workflow_dispatch`.
 2. **Data Retrieval (`scrape.py`):**
-   * Reads target URLs from `feeds.json`.
-   * Automatically detects **subreddits** (`/r/<name>`) vs. **comment threads** (`/comments/<id>`).
-   * Queries Arctic Shift for the latest **100** posts (`/api/posts/search`) or comments (`/api/comments/search` using the `t3_` link prefix).
-   * Bounds comment queries to the last **30 days** (`after` epoch parameter) to prevent `HTTP 422` database timeouts on large megathreads, with an unbounded fallback if a thread had 0 comments in that window.
-   * Retries failed requests up to 3 times with incremental backoff (40s timeout per attempt, 3s delay between feeds).
+   - Reads target URLs from `feeds.json`.
+   - Automatically detects **subreddits** (`/r/<name>`) vs. **comment threads** (`/comments/<id>`).
+   - Queries Arctic Shift for the latest **100** posts (`/api/posts/search`) or comments (`/api/comments/search` using the `t3_` link prefix).
+   - Bounds comment queries to the last **30 days** (`after` epoch parameter) to prevent `HTTP 422` database timeouts on large megathreads, with an unbounded fallback if a thread had 0 comments in that window.
+   - Retries failed requests up to 3 times with incremental backoff (40s timeout per attempt, 3s delay between feeds).
 3. **Parsing & XML Generation:**
-   * Strips stickied posts/comments and `[deleted]` / `[removed]` entries.
-   * Converts Reddit Markdown and bare URLs in text posts and comments into real HTML (`<a>` tags, tables, line breaks) so links are clickable in RSS readers and detectable by browser userscripts.
-   * Uses the permanent Reddit permalink as `<guid>` so RSS readers deduplicate items across polls.
-   * **All-or-Nothing Guard:** If any feed fails to fetch (`len(index_links) < len(FEEDS)`), the script raises an error and aborts the workflow so GitHub Pages does not overwrite existing live `.xml` files with a partial build.
+   - Strips stickied posts/comments and `[deleted]` / `[removed]` entries.
+   - Converts Reddit Markdown and bare URLs in text posts and comments into real HTML (`<a>` tags, tables, line breaks) so links are clickable in RSS readers and detectable by browser userscripts.
+   - Uses the permanent Reddit permalink as `<guid>` so RSS readers deduplicate items across polls.
+   - **All-or-Nothing Guard:** If any feed fails to fetch (`len(index_links) < len(FEEDS)`), the script raises an error and aborts the workflow so GitHub Pages does not overwrite existing live `.xml` files with a partial build.
 4. **Deployment:** The workflow splits `build` and `deploy` into separate jobs so feature branches can run CI checks without tripping `github-pages` branch protection rules. Only runs on `main` deploy `public/`.
 
 ---
@@ -60,8 +60,8 @@ feeds.json ──► scrape.py (Arctic Shift API) ──► public/*.xml ──�
      "url": "[https://old.reddit.com/r/SubredditName/new/](https://old.reddit.com/r/SubredditName/new/)"
    }
    ```
-   * **Subreddit feed:** Any URL containing `/r/<subreddit>`.
-   * **Megathread / Comment feed:** Any URL containing `/comments/<thread_id>`.
+   - **Subreddit feed:** Any URL containing `/r/<subreddit>`.
+   - **Megathread / Comment feed:** Any URL containing `/comments/<thread_id>`.
 3. Commit the change to `main`. GitHub Actions will immediately rebuild and publish `https://styljo.github.io/reddit-rss/<slug>.xml`.
 
 ---
@@ -79,8 +79,8 @@ Generated XML files and `index.html` are written to the local `public/` director
 
 ## Operational Notes
 
-* **60-Day Inactivity Rule:** Handled automatically by `.github/workflows/keepalive.yml`, which pushes an empty commit on the 1st of every month. Because `feed.yml` filters pushes by `paths`, the keepalive commit does not trigger an extra scrape.
-* **Latency:** Arctic Shift ingestion lags live Reddit by a few minutes, and GitHub Actions cron schedules can drift by 5–20 minutes under load.
+- **60-Day Inactivity Rule:** Handled automatically by `.github/workflows/keepalive.yml`, which pushes an empty commit on the 1st of every month. Because `feed.yml` filters pushes by `paths`, the keepalive commit does not trigger an extra scrape.
+- **Latency:** Arctic Shift ingestion lags live Reddit by a few minutes, and GitHub Actions cron schedules can drift by 5–20 minutes under load.
 
 ---
 
@@ -88,9 +88,9 @@ Generated XML files and `index.html` are written to the local `public/` director
 
 Technical decisions, API limitations, and historical troubleshooting are documented in the [`docs/`](./docs) folder to maintain a strict, chronological architectural record. **These files are append-only.** To preserve history, do not edit existing files except the last one. Log any new changes by creating the next sequential file or updating the last one (e.g., `007-new-fix.md`).
 
-* [`001-feed-formatting.md`](./docs/001-feed-formatting.md) - HTML layout and conditional rendering
-* [`002-github-actions-quirks.md`](./docs/002-github-actions-quirks.md) - Keepalive workflow and All-or-Nothing deployment guard
-* [`003-cron-limitations.md`](./docs/003-cron-limitations.md) - GitHub Actions limits and planned pipeline scheduling
-* [`004-arctic-shift-api.md`](./docs/004-arctic-shift-api.md) - Pushshift routing, 30-day fallback, and rate limiting
-* [`005-native-json-block.md`](./docs/005-native-json-block.md) - Reddit WAF blocks on Azure IPs
-* [`006-pullpush-cloudflare-block.md`](./docs/006-pullpush-cloudflare-block.md) - PullPush Cloudflare CAPTCHA blocks
+- [`001-feed-formatting.md`](./docs/001-feed-formatting.md) - HTML layout and conditional rendering
+- [`002-github-actions-quirks.md`](./docs/002-github-actions-quirks.md) - Keepalive workflow and All-or-Nothing deployment guard
+- [`003-cron-limitations.md`](./docs/003-cron-limitations.md) - GitHub Actions limits and planned pipeline scheduling
+- [`004-arctic-shift-api.md`](./docs/004-arctic-shift-api.md) - Pushshift routing, 30-day fallback, and rate limiting
+- [`005-native-json-block.md`](./docs/005-native-json-block.md) - Reddit WAF blocks on Azure IPs
+- [`006-pullpush-cloudflare-block.md`](./docs/006-pullpush-cloudflare-block.md) - PullPush Cloudflare CAPTCHA blocks
