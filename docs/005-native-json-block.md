@@ -4,16 +4,15 @@
 
 ## Goal
 
-Attempted to eliminate Arctic Shift's ingestion lag and megathread timeouts by pulling data directly from Reddit's native JSON feeds (e.g., `.../comments/p0ik3q.json`).
+Attempted to eliminate Arctic Shift's ingestion lag and megathread timeouts ([`004-arctic-shift-api.md`](./004-arctic-shift-api.md)) by pulling data directly from Reddit's native JSON feeds (e.g., `.../comments/p0ik3q.json?sort=new`).
 
 ## Method
 
-Created a standalone `debug/test_reddit_native.py` script utilizing the `curl_cffi` library to spoof a Google Chrome 120 TLS fingerprint, attempting to bypass Reddit's bot detection.
+Created a standalone probe script (`test.py`, renamed `test_reddit_native.py`) utilizing `curl_cffi` to spoof a Google Chrome 120 TLS fingerprint (`impersonate="chrome120"`), and temporarily ran it in `.github/workflows/feed.yml` to test bypassing Reddit's bot detection.
 
 ## Result
 
 - **Status:** `403 Forbidden` (Failed).
-- **Root Cause:** While browser fingerprinting succeeded locally, GitHub Actions executes on Microsoft Azure cloud servers. Reddit's Web Application Firewall (WAF) aggressively blacklists known datacenter IP blocks.
-- **Conclusion:** Native JSON scraping is impossible on cloud CI/CD runners without official developer authentication.
-- **Next Steps:** The `debug/test_reddit_native.py` script remains in the repository as a diagnostic probe. Direct JSON scraping remains a viable fallback only if execution is moved to a residential IP (e.g., a local Windows scheduled task pushing to GitHub).
-- **Rollback / Active State:** No changes were applied to `scrape.py`; Arctic Shift remained the active data source for GitHub Actions.
+- **Root Cause:** GitHub Actions executes on Microsoft Azure cloud servers, and Reddit's Web Application Firewall (WAF) aggressively blocks unauthenticated `.json` requests from datacenter IP ranges.
+- **Conclusion:** Unauthenticated native JSON scraping with `curl_cffi` is not viable on GitHub Actions.
+- **Rollback / Active State:** Reverted `.github/workflows/feed.yml` back to `scrape.py` (no changes were applied to `scrape.py`), keeping Arctic Shift active while evaluating other third-party archives. The probe script was retained in the repository for diagnostic testing.

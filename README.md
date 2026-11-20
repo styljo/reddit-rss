@@ -27,7 +27,7 @@ feeds.json ──► scrape.py (Arctic Shift API) ──► public/*.xml ──�
    - Reads target URLs from `feeds.json`.
    - Automatically detects **subreddits** (`/r/<name>`) vs. **comment threads** (`/comments/<id>`).
    - Queries Arctic Shift for the latest **100** posts (`/api/posts/search`) or comments (`/api/comments/search` using the `t3_` link prefix).
-   - Bounds comment queries to the last **30 days** (`after` epoch parameter) to prevent `HTTP 422` database timeouts on large megathreads, with an unbounded fallback if a thread had 0 comments in that window.
+   - Bounds comment queries to the last **30 days** (`after` epoch parameter) to reduce `HTTP 422` database timeouts on large megathreads, with an unbounded fallback if a thread returns 0 comments in that window.
    - Retries failed requests up to 3 times with incremental backoff (40s timeout per attempt, 3s delay between feeds).
 3. **Parsing & XML Generation:**
    - Strips stickied posts/comments, drops `[deleted]` / `[removed]` comments, and omits `[deleted]` / `[removed]` `selftext` on posts.
@@ -86,20 +86,22 @@ Generated XML files and `index.html` are written to the local `public/` director
 
 - **60-Day Inactivity Rule:** Handled automatically by `.github/workflows/keepalive.yml`, which pushes an empty commit on the 1st of every month. Because `feed.yml` filters pushes by `paths`, the keepalive commit does not trigger an extra scrape.
 - **Latency & Cron Reliability:** Arctic Shift ingestion lags live Reddit by a few minutes, and GitHub Actions free-tier cron schedules frequently drift or drop runs under load (see [`docs/003-cron-limitations.md`](./docs/003-cron-limitations.md)).
+- **Known Megathread Limitation (Unresolved):** While `freegamefindings-new.xml` stays current, both long-running 2021 megathreads (`itchio-megathread.xml` and `exiled-giveaways-megathread.xml`) still hit intermittent Arctic Shift `HTTP 422` timeouts and have no comments indexed in Arctic Shift after **October 21, 2026** (see [`docs/008-post-revert-hardening-and-audit.md`](./docs/008-post-revert-hardening-and-audit.md)).
 
 ---
 
 ## Architecture & Development Notes
 
-Technical decisions, API limitations, and historical troubleshooting are documented in the [`docs/`](./docs) folder to maintain a strict, chronological architectural record. **These files are append-only once finalized.** To preserve history, do not edit completed files—log new changes by creating the next sequential file (e.g., `008-new-fix.md`) or updating the latest entry.
+Technical decisions, API limitations, and historical troubleshooting are documented in the [`docs/`](./docs) folder to maintain a strict, chronological architectural record. **These files are append-only once finalized.** To preserve history, do not edit completed files—log new changes by creating the next sequential file (e.g., `009-new-fix.md`) or updating the latest entry.
 
 - [`001-feed-formatting.md`](./docs/001-feed-formatting.md) - Post/comment HTML layout, Markdown auto-linking, and deduplication
-- [`002-github-actions-quirks.md`](./docs/002-github-actions-quirks.md) - Keepalive workflow, All-or-Nothing guard, and split `build`/`deploy` jobs
+- [`002-github-actions-quirks.md`](./docs/002-github-actions-quirks.md) - Keepalive workflow and All-or-Nothing deployment guard
 - [`003-cron-limitations.md`](./docs/003-cron-limitations.md) - GitHub Actions cron drop rates and planned external scheduling
-- [`004-arctic-shift-api.md`](./docs/004-arctic-shift-api.md) - Arctic Shift API routing, retries, 30-day fallback, and rate limiting
-- [`005-native-json-block.md`](./docs/005-native-json-block.md) - Reddit WAF blocks on Azure IPs
-- [`006-pullpush-cloudflare-block.md`](./docs/006-pullpush-cloudflare-block.md) - PullPush Cloudflare JavaScript challenge blocks
+- [`004-arctic-shift-api.md`](./docs/004-arctic-shift-api.md) - Arctic Shift API routing, retries, and initial megathread timeout mitigations
+- [`005-native-json-block.md`](./docs/005-native-json-block.md) - Reddit WAF `403` blocks on native `.json` scraping
+- [`006-pullpush-cloudflare-block.md`](./docs/006-pullpush-cloudflare-block.md) - PullPush Cloudflare JavaScript challenge blocks and revert to Arctic Shift
 - [`007-local-development-setup.md`](./docs/007-local-development-setup.md) - Local Windows PowerShell workspace and virtual environment setup
+- [`008-post-revert-hardening-and-audit.md`](./docs/008-post-revert-hardening-and-audit.md) - Post-revert CI/scraper hardening, ongoing Arctic Shift megathread timeouts & Oct 21 staleness cutoff, and local probe re-verification
 
 ---
 
