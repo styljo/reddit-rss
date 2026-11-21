@@ -92,7 +92,7 @@ Generated XML files and `index.html` are written to the local `public/` director
 
 ## Architecture & Development Notes
 
-Technical decisions, API limitations, and historical troubleshooting are documented in the [`docs/`](./docs) folder to maintain a strict, chronological architectural record. **These files are append-only once finalized.** To preserve history, do not edit completed files—log new changes by creating the next sequential file (e.g., `009-new-fix.md`) or updating the latest entry.
+Technical decisions, API limitations, and historical troubleshooting are documented in the [`docs/`](./docs) folder to maintain a strict, chronological architectural record. **These files are append-only once finalized.** To preserve history, do not edit completed files—log new changes by creating the next sequential file (e.g., `010-new-fix.md`) or updating the latest entry.
 
 - [`001-feed-formatting.md`](./docs/001-feed-formatting.md) - Post/comment HTML layout, Markdown auto-linking, and deduplication
 - [`002-github-actions-quirks.md`](./docs/002-github-actions-quirks.md) - Keepalive workflow and All-or-Nothing deployment guard
@@ -102,6 +102,7 @@ Technical decisions, API limitations, and historical troubleshooting are documen
 - [`006-pullpush-cloudflare-block.md`](./docs/006-pullpush-cloudflare-block.md) - PullPush Cloudflare JavaScript challenge blocks and revert to Arctic Shift
 - [`007-local-development-setup.md`](./docs/007-local-development-setup.md) - Local Windows PowerShell workspace and virtual environment setup
 - [`008-post-revert-hardening-and-audit.md`](./docs/008-post-revert-hardening-and-audit.md) - Post-revert CI/scraper hardening, ongoing Arctic Shift megathread timeouts & Oct 21 staleness cutoff, and local probe re-verification
+- [`009-reddit-oauth-block.md`](./docs/009-reddit-oauth-block.md) - Reddit `prefs/apps` `HTTP 500` block when attempting to create a personal OAuth `script` app
 
 ---
 
