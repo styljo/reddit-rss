@@ -1,5 +1,8 @@
 # reddit-rss
 
+> [!WARNING]
+> **Project Paused (November 2026):** Development is paused because every free, cloud-hosted path to live comments on the two long-running 2021 megathreads (`itchio-megathread` and `exiled-giveaways-megathread`) is currently blocked at the platform level (Reddit killed native `.rss`, blocks `.json` with `403`, returns `500` on self-service OAuth `prefs/apps`, and removed monotonic comment IDs on October 21, 2026, stopping Arctic Shift from crawling those 2021 threads). `freegamefindings-new.xml` still updates via Arctic Shift. See [`docs/010-megathread-audit-and-options-ruled-out.md`](./docs/010-megathread-audit-and-options-ruled-out.md) for full details.
+
 Automated RSS 2.0 feed generator for Reddit subreddits and megathread comments, built with Python, the Arctic Shift API, GitHub Actions, and GitHub Pages.
 
 ## Active Feeds
@@ -7,8 +10,8 @@ Automated RSS 2.0 feed generator for Reddit subreddits and megathread comments, 
 Subscribe to these URLs in your RSS reader (e.g., CommaFeed, FreshRSS, Miniflux):
 
 - **r/FreeGameFindings (New):** `https://styljo.github.io/reddit-rss/freegamefindings-new.xml`
-- **Itch.io Mega Thread (#10):** `https://styljo.github.io/reddit-rss/itchio-megathread.xml`
-- **Exiled Giveaways Mega Thread (#2):** `https://styljo.github.io/reddit-rss/exiled-giveaways-megathread.xml`
+- **Itch.io Mega Thread (#10):** `https://styljo.github.io/reddit-rss/itchio-megathread.xml` *(stale since Oct 21, 2026)*
+- **Exiled Giveaways Mega Thread (#2):** `https://styljo.github.io/reddit-rss/exiled-giveaways-megathread.xml` *(stale since Oct 21, 2026)*
 
 A directory of active feeds is hosted at `https://styljo.github.io/reddit-rss/`.
 
@@ -86,13 +89,13 @@ Generated XML files and `index.html` are written to the local `public/` director
 
 - **60-Day Inactivity Rule:** Handled automatically by `.github/workflows/keepalive.yml`, which pushes an empty commit on the 1st of every month. Because `feed.yml` filters pushes by `paths`, the keepalive commit does not trigger an extra scrape.
 - **Latency & Cron Reliability:** Arctic Shift ingestion lags live Reddit by a few minutes, and GitHub Actions free-tier cron schedules frequently drift or drop runs under load (see [`docs/003-cron-limitations.md`](./docs/003-cron-limitations.md)).
-- **Known Megathread Limitation (Unresolved):** While `freegamefindings-new.xml` stays current, both long-running 2021 megathreads (`itchio-megathread.xml` and `exiled-giveaways-megathread.xml`) still hit intermittent Arctic Shift `HTTP 422` timeouts and have no comments indexed in Arctic Shift after **October 21, 2026** (see [`docs/008-post-revert-hardening-and-audit.md`](./docs/008-post-revert-hardening-and-audit.md)).
+- **Known Megathread Limitation (Unresolved):** While `freegamefindings-new.xml` stays current, both long-running 2021 megathreads (`itchio-megathread.xml` and `exiled-giveaways-megathread.xml`) still hit intermittent Arctic Shift `HTTP 422` timeouts and have no comments indexed in Arctic Shift after **October 21, 2026** due to Reddit replacing monotonic comment IDs (see [`docs/008-post-revert-hardening-and-audit.md`](./docs/008-post-revert-hardening-and-audit.md) and [`docs/010-megathread-audit-and-options-ruled-out.md`](./docs/010-megathread-audit-and-options-ruled-out.md)).
 
 ---
 
 ## Architecture & Development Notes
 
-Technical decisions, API limitations, and historical troubleshooting are documented in the [`docs/`](./docs) folder to maintain a strict, chronological architectural record. **These files are append-only once finalized.** To preserve history, do not edit completed files—log new changes by creating the next sequential file (e.g., `010-new-fix.md`) or updating the latest entry.
+Technical decisions, API limitations, and historical troubleshooting are documented in the [`docs/`](./docs) folder to maintain a strict, chronological architectural record. **These files are append-only once finalized.** To preserve history, do not edit completed files—log new changes by creating the next sequential file (e.g., `011-new-fix.md`) or updating the latest entry.
 
 - [`001-feed-formatting.md`](./docs/001-feed-formatting.md) - Post/comment HTML layout, Markdown auto-linking, and deduplication
 - [`002-github-actions-quirks.md`](./docs/002-github-actions-quirks.md) - Keepalive workflow and All-or-Nothing deployment guard
@@ -103,6 +106,7 @@ Technical decisions, API limitations, and historical troubleshooting are documen
 - [`007-local-development-setup.md`](./docs/007-local-development-setup.md) - Local Windows PowerShell workspace and virtual environment setup
 - [`008-post-revert-hardening-and-audit.md`](./docs/008-post-revert-hardening-and-audit.md) - Post-revert CI/scraper hardening, ongoing Arctic Shift megathread timeouts & Oct 21 staleness cutoff, and local probe re-verification
 - [`009-reddit-oauth-block.md`](./docs/009-reddit-oauth-block.md) - Reddit `prefs/apps` `HTTP 500` block when attempting to create a personal OAuth `script` app
+- [`010-megathread-audit-and-options-ruled-out.md`](./docs/010-megathread-audit-and-options-ruled-out.md) - Live Reddit megathread check, Arctic Shift monotonic-ID root cause (`#53`/`#84`), FGF Discord RSS outage, and ruled-out alternatives
 
 ---
 
